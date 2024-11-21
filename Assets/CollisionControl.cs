@@ -23,7 +23,7 @@ public class CollisionControl : MonoBehaviour
         {
             int checkActual = other.gameObject.GetComponent<checkPoint>().numeroCheckPoint;
 
-            print("CheckPoint atravesadp");
+            print("CheckPoint atravesado");
 
             if (checkActual == checkPointActual + 1)
             {
@@ -41,7 +41,25 @@ public class CollisionControl : MonoBehaviour
 
                     //dejamos preparado para que pueda volver a empezar
                     checkPointActual = -1;
+
+
+
+                    manager.registraTiempo();
                     manager.vueltas++;
+                    if (manager.vueltas >= manager.vueltasTotales)
+                    {
+
+                        print("Fin carrera");
+
+                        manager.detieneTiempo();
+
+                        gameObject.GetComponent<UserControl>().enabled = false;
+                        gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                        
+                    }
+
+
+
                 }
 
 
