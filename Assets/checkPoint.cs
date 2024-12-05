@@ -8,13 +8,5 @@ public class checkPoint : MonoBehaviour
 
     public int numeroCheckPoint = 0;
 
-
-
-
-    void Start()
-    {
-        
-    }
-
-    
+  
 }

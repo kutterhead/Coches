@@ -6,8 +6,13 @@ public class CollisionControl : MonoBehaviour
 {
     // Start is called before the first frame update
     private int checkPointActual;
+
+    private int ultimoAtravesado = 0;//indice
     
     public gameManager manager;
+    public Transform lanzadorRay;
+
+    private float tiempoFuera = 0;
 
 
     void Start()
@@ -17,12 +22,53 @@ public class CollisionControl : MonoBehaviour
         manager = GameObject.FindGameObjectWithTag("Manager").GetComponent<gameManager>();
     }
 
+    private void Update()
+    {
+        Vector3 direccionDelRayo = Vector3.down;
+        Debug.DrawRay(lanzadorRay.position, direccionDelRayo*2f);
+        if (Physics.Raycast(lanzadorRay.position, direccionDelRayo, out RaycastHit hit, 2f))
+        {
+           // Debug.Log("Hit: " + hit.collider.tag);
+            if (hit.collider.CompareTag("OutRoad"))
+            {
+                //hemos salido
+                tiempoFuera+=Time.deltaTime;
+                Debug.Log("Hit: " + tiempoFuera.ToString("F2"));
+
+
+                if (tiempoFuera>=5f)
+                {
+                    Debug.Log("resetea posición:");
+
+                    transform.position = manager.checkPoints[ultimoAtravesado].position;
+                    transform.rotation = manager.checkPoints[ultimoAtravesado].rotation;
+                    GetComponent<Rigidbody>().velocity = Vector3.zero;
+
+
+                }
+
+
+            }
+            else
+            {
+                //estamos en pista
+                tiempoFuera = 0;
+
+
+            }
+            // Si el rayo golpea un objeto, imprimir el nombre del objeto
+        }
+
+
+        
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("checkPoint"))
         {
             int checkActual = other.gameObject.GetComponent<checkPoint>().numeroCheckPoint;
-
+            ultimoAtravesado = checkActual;
             print("CheckPoint atravesado");
 
             if (checkActual == checkPointActual + 1)
@@ -67,5 +113,21 @@ public class CollisionControl : MonoBehaviour
 
         }
         
+    }
+    //private void OnCollisionStay(Collision collision)
+    //{
+    //    if (collision.gameObject.CompareTag("outRoad"))
+    //    {
+    //    }
+    //}
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("Colision con :" + collision.gameObject.name);
+        if (collision.gameObject.CompareTag("OutRoad"))
+        {
+
+            Debug.Log("hemos salido");
+        }
     }
 }

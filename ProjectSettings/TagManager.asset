@@ -8,6 +8,7 @@ TagManager:
   - ResetDriftCollision
   - checkPoint
   - Manager
+  - OutRoad
   layers:
   - Default
   - TransparentFX
