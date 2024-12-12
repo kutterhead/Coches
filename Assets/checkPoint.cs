@@ -7,6 +7,7 @@ public class checkPoint : MonoBehaviour
     // Start is called before the first frame update
 
     public int numeroCheckPoint = 0;
+   // public int checkPointAtravesado; 
 
   
 }

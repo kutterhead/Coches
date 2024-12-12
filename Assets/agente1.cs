@@ -9,12 +9,13 @@ public class agente1 : MonoBehaviour
     public Transform player;
     public gameManager manager;
     public int checkActual;
-    public int vueltasActtuales;
-
+    public int vueltasActuales;
+    public byte posicionCarrera = 0;
+    public float[] tiempos;
     void Start()
     {
         checkActual = 0;
-        vueltasActtuales = 0;
+        vueltasActuales = 0;
         GetComponent<NavMeshAgent>().SetDestination(manager.checkPoints[checkActual].position);
     }
 
@@ -29,14 +30,24 @@ public class agente1 : MonoBehaviour
 
             if (other.gameObject.GetComponent<checkPoint>().numeroCheckPoint == checkActual)
             {
+                System.Array.Resize(ref tiempos, tiempos.Length + 1);
+                tiempos[tiempos.Length-1] = manager.gameObject.GetComponent<timeControl>().tiempoActual;
+
+
                 checkActual++;
                 if (checkActual== manager.checkPoints.Length)
                 {
                     checkActual = 0;
-                    vueltasActtuales++;
-                    if (vueltasActtuales >= manager.vueltasTotales)
+                    vueltasActuales++;
+
+
+                    //fin carrera para agente
+                    if (vueltasActuales >= manager.vueltasTotales)
                     {
-                        Destroy(this);//eliminamos este script
+                        manager.numeroGanador++;
+                        posicionCarrera = manager.numeroGanador;
+                        GetComponent<NavMeshAgent>().enabled = false;
+                        this.enabled = false;
                     }
 
                 }

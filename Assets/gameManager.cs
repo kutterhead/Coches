@@ -13,11 +13,11 @@ public class gameManager : MonoBehaviour
     public float[] tiempoVueltas;
 
     timeControl tc;
-
+    public byte numeroGanador = 0; 
 
     private void Awake()
     {
-
+        numeroGanador = 0;
         for (int i = 0; i < checkPoints.Length;i++)
         {
             checkPoints[i].gameObject.GetComponent<checkPoint>().numeroCheckPoint = i;

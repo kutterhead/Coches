@@ -15,6 +15,8 @@ public class CollisionControl : MonoBehaviour
     private float tiempoFuera = 0;
 
 
+    byte posicionCarrera = 0;
+
     void Start()
     {
         checkPointActual = -1;
@@ -26,6 +28,9 @@ public class CollisionControl : MonoBehaviour
     {
         Vector3 direccionDelRayo = Vector3.down;
         Debug.DrawRay(lanzadorRay.position, direccionDelRayo*2f);
+
+
+        //rayo disparado para detectar la carretera
         if (Physics.Raycast(lanzadorRay.position, direccionDelRayo, out RaycastHit hit, 2f))
         {
            // Debug.Log("Hit: " + hit.collider.tag);
@@ -95,13 +100,16 @@ public class CollisionControl : MonoBehaviour
                     if (manager.vueltas >= manager.vueltasTotales)
                     {
 
-                        print("Fin carrera");
 
                         manager.detieneTiempo();
+                        manager.numeroGanador++;
+                        posicionCarrera = manager.numeroGanador;
 
+                        //deshabilita controles
                         gameObject.GetComponent<UserControl>().enabled = false;
                         gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
                         
+                        print("Fin carrera, posición: " + posicionCarrera);
                     }
 
 
