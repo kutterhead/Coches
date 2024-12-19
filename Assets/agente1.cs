@@ -14,6 +14,10 @@ public class agente1 : MonoBehaviour
     public float[] tiempos;
     void Start()
     {
+
+       player = GameObject.FindGameObjectWithTag("Car").transform;
+       manager = FindObjectOfType<gameManager>();
+
         checkActual = 0;
         vueltasActuales = 0;
         GetComponent<NavMeshAgent>().SetDestination(manager.checkPoints[checkActual].position);

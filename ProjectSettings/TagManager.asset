@@ -9,6 +9,7 @@ TagManager:
   - checkPoint
   - Manager
   - OutRoad
+  - Road
   layers:
   - Default
   - TransparentFX

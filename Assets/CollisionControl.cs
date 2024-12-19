@@ -20,8 +20,8 @@ public class CollisionControl : MonoBehaviour
     void Start()
     {
         checkPointActual = -1;
-        
-        manager = GameObject.FindGameObjectWithTag("Manager").GetComponent<gameManager>();
+        ultimoAtravesado = -1;
+       manager = GameObject.FindGameObjectWithTag("Manager").GetComponent<gameManager>();
     }
 
     private void Update()
@@ -45,23 +45,47 @@ public class CollisionControl : MonoBehaviour
                 {
                     Debug.Log("resetea posición:");
 
-                    transform.position = manager.checkPoints[ultimoAtravesado].position;
-                    transform.rotation = manager.checkPoints[ultimoAtravesado].rotation;
-                    GetComponent<Rigidbody>().velocity = Vector3.zero;
-
+                    vuelveACheckpoitUltimo();
 
                 }
 
-
             }
-            else
+            else if (hit.collider.CompareTag("Road"))
             {
                 //estamos en pista
                 tiempoFuera = 0;
 
 
             }
+            else
+            {
+
+                Debug.Log("hemos volcado");
+                Invoke("vuelveACheckpoitUltimo", 2f);
+
+            }
             // Si el rayo golpea un objeto, imprimir el nombre del objeto
+        }
+
+
+        
+    }
+
+    public void vuelveACheckpoitUltimo()
+    {
+
+        if (ultimoAtravesado < 0)
+        {
+            transform.position = manager.checkPoints[manager.checkPoints.Length-1].position;
+            transform.rotation = manager.checkPoints[manager.checkPoints.Length - 1].rotation;
+            GetComponent<Rigidbody>().velocity = Vector3.zero;
+        }
+        else
+        {
+            transform.position = manager.checkPoints[ultimoAtravesado].position;
+            transform.rotation = manager.checkPoints[ultimoAtravesado].rotation;
+            GetComponent<Rigidbody>().velocity = Vector3.zero;
+
         }
 
 
