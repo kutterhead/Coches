@@ -5,6 +5,9 @@ using UnityEngine;
 public class ColisionNPC : MonoBehaviour
 {
     // Start is called before the first frame update
+
+    CarController ControlledCar;
+
     private int checkPointActual;
 
     private int ultimoAtravesado = 0;//indice
@@ -13,18 +16,135 @@ public class ColisionNPC : MonoBehaviour
     public Transform lanzadorRay;
 
     private float tiempoFuera = 0;
+    public float Horizontal { get; private set; }
+    public float Vertical { get; private set; }
+    public bool Brake { get; private set; }
 
-
+    public Transform sensorL;
+    public Transform sensorR;
     //byte posicionCarrera = 0;
+
+
+    public bool SL;
+    public bool SR;
 
     void Start()
     {
-        checkPointActual = -1;
+
+        
+            ControlledCar = GetComponent<CarController>();
+
+            checkPointActual = -1;
 
         manager = GameObject.FindGameObjectWithTag("Manager").GetComponent<gameManager>();
+
+        Horizontal = 0f;
+        Vertical = 0.5f;
+        Brake = false;
+
     }
 
-    private void Update()
+
+    public void Update()
+    {
+        //Vertical += Time.deltaTime / 5;
+        ControlledCar.UpdateControls(Horizontal, Vertical, Brake);
+
+
+        updateControl();
+
+        UpdateSensorsRoadLR();
+        //UpdateSensorRoad();
+    }
+
+
+
+    private void updateControl()
+    {
+        if (SL == false && SR== false)
+        {
+            Horizontal = 0f;
+            Vertical = 0.2f;
+            Brake = false;
+
+            //avanza
+        }
+        else if (SL == false && SR == true)
+        {
+            Horizontal = -0.4f;
+            Vertical = 0.1f;
+            Brake = false;
+
+            //gira I
+        }
+        else if (SL == true && SR == false)
+        {
+            Horizontal = 0.4f;
+            Vertical = 0.1f;
+            Brake = false;
+
+            //gira D
+        }
+        else//caso true true
+        {
+            Horizontal = 0f;
+            Vertical = 0.5f;
+            Brake = true;
+
+            //avanza
+        }
+
+    }
+
+    private void UpdateSensorsRoadLR()//intentar añadir sensor central 8 combinaciones
+    {
+        Vector3 direccionDelRayo = Vector3.down;
+        Debug.DrawRay(sensorL.position, direccionDelRayo * 2f);
+
+
+        //rayo disparado para detectar la carretera
+        if (Physics.Raycast(sensorL.position, direccionDelRayo, out RaycastHit hit, 2f))
+        {
+            // Debug.Log("Hit: " + hit.collider.tag);
+            if (hit.collider.CompareTag("OutRoad"))
+            {
+
+                SL = true;
+                           }
+            else if (hit.collider.CompareTag("Road"))
+            {
+              
+                SL = false;
+            }
+            
+        }
+
+        //proyectoa segundo ray
+        if (Physics.Raycast(sensorR.position, direccionDelRayo, out RaycastHit hit2, 2f))
+        {
+            // Debug.Log("Hit: " + hit.collider.tag);
+            if (hit2.collider.CompareTag("OutRoad"))
+            {
+                //Debug.Log("HitR: " + tiempoFuera.ToString("F2"));
+
+                SR = true;
+               
+            }
+            else if (hit2.collider.CompareTag("Road"))
+            {
+                //estamos en pista
+                //tiempoFuera = 0;
+                //Debug.Log("HitR: " + tiempoFuera.ToString("F2"));
+                SR = false;
+            }
+
+        }
+
+
+    }
+
+
+    private void UpdateSensorRoad()
     {
         Vector3 direccionDelRayo = Vector3.down;
         Debug.DrawRay(lanzadorRay.position, direccionDelRayo * 2f);
