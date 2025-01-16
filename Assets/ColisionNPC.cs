@@ -8,14 +8,14 @@ public class ColisionNPC : MonoBehaviour
 
     CarController ControlledCar;
 
-    private int checkPointActual;
+    public int checkPointActual;//el check point que busca
 
-    private int ultimoAtravesado = 0;//indice
+    private int ultimoAtravesado = 0;//el último check atravesado
 
-    public gameManager manager;
+    gameManager manager;//privado pues se captura en Start
     public Transform lanzadorRay;
 
-    private float tiempoFuera = 0;
+    private float tiempoFuera { get; set; }
     public float Horizontal { get; private set; }
     public float Vertical { get; private set; }
     public bool Brake { get; private set; }
@@ -28,18 +28,22 @@ public class ColisionNPC : MonoBehaviour
     public bool SL;
     public bool SR;
 
+    //Control proporcional------------------------------------------------------
+
+    public Transform puntero;
+
     void Start()
     {
 
         
-            ControlledCar = GetComponent<CarController>();
+        ControlledCar = GetComponent<CarController>();
 
-            checkPointActual = -1;
+        checkPointActual = 0;//inicialización de check
 
-        manager = GameObject.FindGameObjectWithTag("Manager").GetComponent<gameManager>();
+        manager = GameObject.FindGameObjectWithTag("Manager").GetComponent<gameManager>();//captura de manager
 
         Horizontal = 0f;
-        Vertical = 0.5f;
+        Vertical = 0.05f;
         Brake = false;
 
     }
@@ -49,11 +53,15 @@ public class ColisionNPC : MonoBehaviour
     {
         //Vertical += Time.deltaTime / 5;
         ControlledCar.UpdateControls(Horizontal, Vertical, Brake);
+        puntero.LookAt(manager.checkPoints[3]);
 
+     
+        Debug.Log(puntero.localEulerAngles.y);
 
-        updateControl();
-
-        UpdateSensorsRoadLR();
+        
+        //control binario
+        //updateControl();
+        //UpdateSensorsRoadLR();
         //UpdateSensorRoad();
     }
 
@@ -199,6 +207,60 @@ public class ColisionNPC : MonoBehaviour
         GetComponent<Rigidbody>().velocity = Vector3.zero;
     }
 
-    
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("checkPoint"))
+        {
+            int checkActual = other.gameObject.GetComponent<checkPoint>().numeroCheckPoint;
+            ultimoAtravesado = checkActual;
+            print("NPC CheckPoint atravesado");
+
+            if (checkActual == checkPointActual)
+            {
+
+
+                checkPointActual++;
+                print("NPC CheckPoint número: " + checkPointActual);
+
+
+                //en este caso ha llegado al último
+                if (checkActual == manager.checkPoints.Length - 1)
+                {
+                    print("Fin Vuelta");
+
+
+                    //dejamos preparado para que pueda volver a empezar
+                    checkPointActual = -1;
+
+
+
+                    //manager.registraTiempo();
+                    //manager.vueltas++;
+                    if (manager.vueltas >= manager.vueltasTotales)
+                    {
+
+
+                        manager.detieneTiempo();
+                        manager.numeroGanador++;
+                        //posicionCarrera = manager.numeroGanador;
+
+                        //deshabilita controles
+                        //gameObject.GetComponent<UserControl>().enabled = false;
+                        gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
+
+                       // print("Fin carrera, posición: " + posicionCarrera);
+                    }
+
+
+
+                }
+
+
+            }
+
+        }
+
+    }
+
 
 }

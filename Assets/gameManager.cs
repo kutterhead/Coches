@@ -6,6 +6,10 @@ public class gameManager : MonoBehaviour
 {
     // Start is called before the first frame update
 
+
+    public GameObject CheckPointContainer;
+
+    public GameObject[] checkPointsObjects;
     public Transform[] checkPoints;
     public int vueltas;//estas son las vueltas actuales
 
@@ -17,10 +21,16 @@ public class gameManager : MonoBehaviour
 
     private void Awake()
     {
+
+        checkPointsObjects = GameObject.FindGameObjectsWithTag("checkPoint");
+
+        System.Array.Resize(ref checkPoints, checkPointsObjects.Length);
+
         numeroGanador = 0;
         for (int i = 0; i < checkPoints.Length;i++)
         {
-            checkPoints[i].gameObject.GetComponent<checkPoint>().numeroCheckPoint = i;
+            checkPointsObjects[i].GetComponent<checkPoint>().numeroCheckPoint = i;
+            checkPoints[i] = checkPointsObjects[i].transform;
         }
         tc = gameObject.GetComponent<timeControl>();
     }

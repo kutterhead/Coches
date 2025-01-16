@@ -7,14 +7,10 @@ public class CollisionControl : MonoBehaviour
     // Start is called before the first frame update
     private int checkPointActual;
 
-    private int ultimoAtravesado = 0;//indice
-    
+    private int ultimoAtravesado = 0;//indice   
     public gameManager manager;
     public Transform lanzadorRay;
-
     private float tiempoFuera = 0;
-
-
     byte posicionCarrera = 0;
 
     void Start()
