@@ -17,7 +17,7 @@ public class ColisionNPC : MonoBehaviour
 
     private float tiempoFuera { get; set; }
     public float Horizontal { get; private set; }
-    public float Vertical { get; private set; }
+    public float Vertical;
     public bool Brake { get; private set; }
 
     public Transform sensorL;
@@ -31,7 +31,8 @@ public class ColisionNPC : MonoBehaviour
     //Control proporcional------------------------------------------------------
 
     public Transform puntero;
-
+    public float factorSteer = 0f;
+    public float factorSpeed = 0f;
     void Start()
     {
 
@@ -43,7 +44,7 @@ public class ColisionNPC : MonoBehaviour
         manager = GameObject.FindGameObjectWithTag("Manager").GetComponent<gameManager>();//captura de manager
 
         Horizontal = 0f;
-        Vertical = 0.05f;
+        //Vertical = 0.1f;//velocidad hacia adelante
         Brake = false;
 
     }
@@ -53,12 +54,34 @@ public class ColisionNPC : MonoBehaviour
     {
         //Vertical += Time.deltaTime / 5;
         ControlledCar.UpdateControls(Horizontal, Vertical, Brake);
-        puntero.LookAt(manager.checkPoints[3]);
 
-     
-        Debug.Log(puntero.localEulerAngles.y);
 
-        
+        puntero.LookAt(manager.checkPoints[checkPointActual]);
+
+
+        //control proporcional
+        float angulo = puntero.localEulerAngles.y;
+        //Debug.Log(puntero.rotation.y);
+        if (puntero.localEulerAngles.y>180)
+        {
+            angulo -= 360;
+
+        }
+        Debug.Log(angulo);
+        float direccionX = (angulo / 180)* factorSteer;
+        Horizontal = direccionX;
+        //-------------------------------------------------
+        if (Mathf.Abs(angulo)>30)
+        {
+            Brake = true;
+
+        }
+        else
+        {
+            Brake = false;
+        }
+        Vertical = (1 - Mathf.Abs(angulo / 180) ) * factorSpeed;
+
         //control binario
         //updateControl();
         //UpdateSensorsRoadLR();
@@ -220,6 +243,13 @@ public class ColisionNPC : MonoBehaviour
 
 
                 checkPointActual++;
+                if (checkPointActual > manager.checkPointsObjects.Length-1)
+                {
+                    checkPointActual = 0;
+                }
+
+
+
                 print("NPC CheckPoint número: " + checkPointActual);
 
 
@@ -230,7 +260,7 @@ public class ColisionNPC : MonoBehaviour
 
 
                     //dejamos preparado para que pueda volver a empezar
-                    checkPointActual = -1;
+                   // checkPointActual = -1;
 
 
 
